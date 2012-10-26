@@ -1,4 +1,4 @@
-package com.novabox.octopus 
+package com.octopus 
 {
 	import com.novabox.MASwithTwoNests.Agent;
 	/**
