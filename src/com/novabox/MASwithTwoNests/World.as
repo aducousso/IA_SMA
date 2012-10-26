@@ -5,6 +5,7 @@
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.geom.Point;
+	import com.twister.TwitedEquipeBot;
 	
 	
 	/**
@@ -47,9 +48,13 @@
 																0xAA0000,
 																new Array(AgentType.AGENT_BOT));
 																
+		public static const MY_TEAM:BotTeam = new BotTeam(	"MyTeamDeOuf",
+																0x0055AA,
+																new Array(TwitedEquipeBot.BOT_PROTECTOR));
+																
 															
 		
-		public static const ALL_TEAMS:Array = new Array(CUSTOM_TEAM); 
+		public static const ALL_TEAMS:Array = new Array(CUSTOM_TEAM, MY_TEAM); 
 																
 		private var agents:Array;
 
