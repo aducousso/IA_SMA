@@ -57,7 +57,7 @@
 		
 			if (isNaN(parseInt(botCountField.text)))
 			{
-				botCountField.text = "50";
+				botCountField.text = "8";
 			}
 			
 			World.BOT_COUNT =  parseInt(botCountField.text);
@@ -119,7 +119,7 @@
 			botCountField.x = 738;
 			botCountField.y = 100;
 			botCountField.setTextFormat(new TextFormat("arial", 11));
-			botCountField.text = "50";
+			botCountField.text = "8";
 
 			addChild(botCountField);
 
