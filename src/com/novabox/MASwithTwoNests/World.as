@@ -5,7 +5,7 @@
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.geom.Point;
-	import com.twister.TwitedEquipeBot;
+	import com.OCTOPUSH.TwitedEquipeBot;
 	
 	
 	/**
