@@ -22,14 +22,12 @@ package com.OCTOPUSH
 		}
 		
 		override public function Update() : void {
-			trace("BLOUP");
 			var p:Point = new Point (50, 50);
 			direction = p.subtract(targetPoint);
 			direction.normalize(1);
 			//this.color = 300;
 			super.Update();
 			//this.graphics.beginFill(0x00FFFF);
-			
 		}
 		
 		

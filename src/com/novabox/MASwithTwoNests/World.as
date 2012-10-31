@@ -23,7 +23,7 @@
 		
 		public static const BOT_RADIUS:Number = 2;
 		public static const BOT_PERCEPTION_RADIUS:Number = 30;
-		public static var BOT_COUNT:Number = 80;
+		public static var BOT_COUNT:Number = 10;
 		public static const BOT_INIT_POSITION:Point = new Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
 		public static const BOT_SPEED:Number = 100;
 		public static const BOT_DIRECTION_CHANGE_DELAY:Number = 500;
@@ -50,7 +50,8 @@
 																
 		public static const MY_TEAM:BotTeam = new BotTeam(	"MyTeamDeOuf",
 																0x0055AA,
-																new Array(/*TwitedEquipeBot.BOT_PROTECTOR, */TwitedEquipeBot.BOT_EXPLORER));
+																new Array(TwitedEquipeBot.BOT_PROTECTOR,
+																TwitedEquipeBot.BOT_RECOLTEUR));
 																
 															
 		
