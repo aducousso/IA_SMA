@@ -50,7 +50,7 @@
 																
 		public static const MY_TEAM:BotTeam = new BotTeam(	"MyTeamDeOuf",
 																0x0055AA,
-																new Array(TwitedEquipeBot.BOT_PROTECTOR));
+																new Array(/*TwitedEquipeBot.BOT_PROTECTOR, */TwitedEquipeBot.BOT_EXPLORER));
 																
 															
 		

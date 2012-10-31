@@ -10,6 +10,7 @@ package com.OCTOPUSH
 		
 		public function BotProtector(_type:AgentType) {
 			super(_type);
+			trace("Protector");
 		}
 		
 		override public function Update() : void {
@@ -20,19 +21,19 @@ package com.OCTOPUSH
 			var collidedAgent:Agent = _event.GetAgent();
 			
 			if (IsCollided(collidedAgent)) {
-				trace('boum');
+				//trace('boum');
 			} else {
 				if (collidedAgent.GetType() == AgentType.AGENT_RESOURCE) {
 					var ress:Resource = (collidedAgent as Resource);
 					
-					trace('RESSOURCE');
+					//trace('RESSOURCE');
 				} else if (collidedAgent.GetType() == AgentType.AGENT_BOT_HOME) {
-					trace('MAISON');
+					//trace('MAISON');
 				} else {
 					if (collidedAgent.GetType() == TwitedEquipeBot.BOT_PROTECTOR) {
-						trace('COPAIN');
+						//trace('COPAIN');
 					} else {
-						trace('ENNEMI');
+						//trace('ENNEMI');
 					}
 				}
 			}

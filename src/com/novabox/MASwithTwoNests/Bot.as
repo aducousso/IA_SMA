@@ -150,9 +150,9 @@
 			{
 				botSpeed *= World.BOT_WITH_RESOURCE_SPEED_COEFF;
 			}
-			
-			 targetPoint.x = x + direction.x * botSpeed * elapsedTime / 1000 ;
-			 targetPoint.y = y + direction.y * botSpeed * elapsedTime / 1000;			
+			trace(direction.x);
+			targetPoint.x = x + direction.x * botSpeed * elapsedTime / 1000;
+			targetPoint.y = y + direction.y * botSpeed * elapsedTime / 1000;
 		}
 				
 		public function GetDirection() : Point
