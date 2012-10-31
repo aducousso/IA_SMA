@@ -17,23 +17,13 @@ package com.OCTOPUSH
 		{
 			super(_type);
 			this.graphics.beginFill(0x00FFFF);
-			trace("EXPLORER");
+			trace("BotExploreur");
 			
 		}
 		
 		override public function Update() : void {
-			var p:Point = new Point(Math.floor(Math.random() * 10 - 5), Math.floor(Math.random() * 10 - 5));
-			direction = p.normalize(1);
-			//this.color = 300;
 			super.Update();
-			//this.graphics.beginFill(0x00FFFF);
 		}
-		
-		
-		/*public function BotProtector(_type:AgentType) {
-			super(_type);
-			SetTargetPoint(EXPLORER_INIT_POSITION);
-		}*/
 		
 	}
 

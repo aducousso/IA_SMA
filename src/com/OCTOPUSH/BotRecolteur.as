@@ -18,6 +18,7 @@ package com.OCTOPUSH
 	
 		public function BotRecolteur(_type:AgentType)  
 		{
+			trace('BotRecolteur');
 			super(_type);
 		}
 		public function getBotDevant() : Bot {

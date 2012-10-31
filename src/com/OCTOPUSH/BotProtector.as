@@ -10,18 +10,23 @@ package com.OCTOPUSH
 	public class BotProtector extends Bot {
 		
 		public function BotProtector(_type:AgentType) {
+			trace("BotProtector");
 			super(_type);
-			trace("Protector");
 		}
 		
 		override public function Update() : void {
-			var p:Point = new Point(Math.floor(Math.random() * 10 - 5), Math.floor(Math.random() * 10 - 5));
-			p.normalize(1);
-			direction = p;
-			//this.color = 300;
+			calculerDirectionDepuisPointDestination(new Point (300, 300));
+			
 			super.Update();
-			//this.graphics.beginFill(0x00FFFF);
 		}
+		
+		
+		public function calculerDirectionDepuisPointDestination(maDestination:Point) : void {
+			direction = new Point(maDestination.x - this.x, maDestination.y - this.y);
+			direction.normalize(1);
+		}
+		
+		
 		
 		override public function onAgentCollide(_event:AgentCollideEvent) : void {
 			var collidedAgent:Agent = _event.GetAgent();
