@@ -5,6 +5,7 @@ package com.OCTOPUSH
 	import com.novabox.MASwithTwoNests.AgentType;
 	import com.novabox.MASwithTwoNests.Bot;
 	import com.novabox.MASwithTwoNests.Resource;
+	import flash.geom.Point;
 	
 	public class BotProtector extends Bot {
 		
@@ -14,7 +15,12 @@ package com.OCTOPUSH
 		}
 		
 		override public function Update() : void {
+			var p:Point = new Point(Math.floor(Math.random() * 10 - 5), Math.floor(Math.random() * 10 - 5));
+			p.normalize(1);
+			direction = p;
+			//this.color = 300;
 			super.Update();
+			//this.graphics.beginFill(0x00FFFF);
 		}
 		
 		override public function onAgentCollide(_event:AgentCollideEvent) : void {

@@ -22,9 +22,8 @@ package com.OCTOPUSH
 		}
 		
 		override public function Update() : void {
-			var p:Point = new Point (50, 50);
-			direction = p.subtract(targetPoint);
-			direction.normalize(1);
+			var p:Point = new Point(Math.floor(Math.random() * 10 - 5), Math.floor(Math.random() * 10 - 5));
+			direction = p.normalize(1);
 			//this.color = 300;
 			super.Update();
 			//this.graphics.beginFill(0x00FFFF);
