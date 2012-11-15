@@ -10,12 +10,12 @@ package com.OCTOPUSH
 	public class BotProtector extends Bot {
 		
 		public function BotProtector(_type:AgentType) {
-			trace("BotProtector");
+			//trace("BotProtector");
 			super(_type);
 		}
 		
 		override public function Update() : void {
-			calculerDirectionDepuisPointDestination(new Point (300, 300));
+			//calculerDirectionDepuisPointDestination(new Point (300, 300));
 			
 			super.Update();
 		}

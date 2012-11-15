@@ -8,20 +8,19 @@ package com.OCTOPUSH
 	 * ...
 	 * @author ADB
 	 */
-	public class BotExplorer extends Bot
+	public class BotExplorer extends SuperBot
 	{
-		public static const EXPLORER_INIT_POSITION:Point = new Point(50,50);
+		public static const EXPLORER_INIT_POSITION:Point = new Point(350,350);
 		
 		
 		public function BotExplorer(_type:AgentType)
 		{
 			super(_type);
-			this.graphics.beginFill(0x00FFFF);
-			trace("BotExploreur");
-			
+			this.graphics.beginFill(0x00FFFF);			
 		}
 		
 		override public function Update() : void {
+			moveAt(EXPLORER_INIT_POSITION);
 			super.Update();
 		}
 		
