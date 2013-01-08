@@ -78,7 +78,7 @@
 				
 		public function	InitSprites() : void
 		{
-			this.graphics.beginFill(0XAAAAAA, 0.5);
+			this.graphics.beginFill(0XAAAAAA, 0.);
 				this.graphics.drawCircle(0, 0, perceptionRadius);
 			this.graphics.endFill();
 			
@@ -134,8 +134,7 @@
 			else
 			{
 				//Perception
-				
-	
+					
 			}
 		}
 
@@ -151,8 +150,8 @@
 				botSpeed *= World.BOT_WITH_RESOURCE_SPEED_COEFF;
 			}
 			
-			targetPoint.x = x + direction.x * botSpeed * elapsedTime / 1000;
-			targetPoint.y = y + direction.y * botSpeed * elapsedTime / 1000;
+			 targetPoint.x = x + direction.x * botSpeed * elapsedTime / 1000 ;
+			 targetPoint.y = y + direction.y * botSpeed * elapsedTime / 1000;			
 		}
 				
 		public function GetDirection() : Point

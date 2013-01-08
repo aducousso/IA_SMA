@@ -33,38 +33,5 @@ package com.OCTOPUSH
 		public function setBotDerrier(value:BotRecolteur) : void {
 			this.botDerriere = value;
 		}
-	
-		
-		
-		
-	override public function onAgentCollide(_event:AgentCollideEvent) : void {
-			var collidedAgent:Agent = _event.GetAgent();
-			
-			if (IsCollided(collidedAgent)) {
-				//trace('boum');
-			} else {
-				if (collidedAgent.GetType() == AgentType.AGENT_RESOURCE) {
-					var ress:Resource = (collidedAgent as Resource);
-					
-					//trace('RESSOURCE');
-				} else if (collidedAgent.GetType() == AgentType.AGENT_BOT_HOME) {
-					//trace('MAISON');
-				} else {
-					if (collidedAgent.GetType() == TwitedEquipeBot.BOT_RECOLTEUR) {
-						//trace('COPAIN');
-						var bot: BotRecolteur = (collidedAgent as BotRecolteur);
-						if (bot.getBotDerriere() == null) {
-							this.botDevant = bot;
-							bot.setBotDerrier(this);
-							var point: Point = new Point(0, 0);
-							this.SetTargetPoint(point);
-						}
-						
-					} else {
-						//trace('ENNEMI');
-					}
-				}
-			}
-		}
 	}
 }

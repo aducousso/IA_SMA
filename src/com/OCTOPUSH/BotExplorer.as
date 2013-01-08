@@ -10,7 +10,7 @@ package com.OCTOPUSH
 	 */
 	public class BotExplorer extends SuperBot
 	{
-		public static const EXPLORER_INIT_POSITION:Point = new Point(350,350);
+		public static const EXPLORER_INIT_POSITION:Point = new Point(29,29);
 		
 		
 		public function BotExplorer(_type:AgentType)
@@ -24,6 +24,10 @@ package com.OCTOPUSH
 			super.Update();
 		}
 		
+		// générer un tableau de point qui représente le parcours des bots
+		public function GenerateMyWay(): Array {
+			return null;
+		}
 	}
 
 }

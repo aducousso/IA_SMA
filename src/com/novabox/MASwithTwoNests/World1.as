@@ -1,13 +1,12 @@
 ﻿package com.novabox.MASwithTwoNests 
 {
 	import adobe.utils.ProductManager;
-	import com.novabox.DummyTeam.DummyType;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.geom.Point;
 	import com.OCTOPUSH.TwitedEquipeBot;
-
+	
 	
 	/**
 	 * Cognitive Multi-Agent System Example
@@ -24,9 +23,9 @@
 		
 		public static const BOT_RADIUS:Number = 2;
 		public static const BOT_PERCEPTION_RADIUS:Number = 30;
-		public static var BOT_COUNT:Number = 2;
+		public static var BOT_COUNT:Number = 1;
 		public static const BOT_INIT_POSITION:Point = new Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-		public static const BOT_SPEED:Number = 50;
+		public static const BOT_SPEED:Number = 100;
 		public static const BOT_DIRECTION_CHANGE_DELAY:Number = 500;
 		
 		public static const RESOURCE_LIFE_RADIUS_COEFF:Number = 10;
@@ -38,28 +37,27 @@
 		
 		//WORLD PARAMETERS
 		public static var HOME_RADIUS:Number						= 10;
-		public static var HOME_GETTING_BIGGER:Boolean				= false;
+		public static var HOME_GETTING_BIGGER:Boolean				= true;
 		public static var RESOURCE_RANDOM_START_LIFE:Boolean		= true;
-		public static var BOT_WITH_RESOURCE_SPEED_COEFF:Number		= 1;
-		public static var BOT_START_FROM_HOME:Boolean				= false;
+		public static var BOT_WITH_RESOURCE_SPEED_COEFF:Number	= 1;
+		public static var BOT_START_FROM_HOME:Boolean				= true;
 		
-		public static var RESOURCE_MIN_SPEED:Number					= 15;
-		public static var RESOURCE_MAX_SPEED:Number					= 20;
-		
-		public static const DUMMY_TEAM1:BotTeam = new BotTeam(	"Dummy 1",
-																0xAA0000,
-																new Array(DummyType.DummyBotType));
-																
 
+		
+		public static const CUSTOM_TEAM:BotTeam = new BotTeam(	"CustomTeam",
+																0xAA0000,
+																new Array(AgentType.AGENT_BOT));
+																
 		public static const MY_TEAM:BotTeam = new BotTeam(	"MyTeamDeOuf",
 																0x0055AA,
 																new Array(
 																TwitedEquipeBot.BOT_GENERIC /*,
 																TwitedEquipeBot.BOT_RECOLTEUR,
 																TwitedEquipeBot.BOT_EXPLORATEUR*/));
-
+																
+															
 		
-		public static const ALL_TEAMS:Array = new Array(DUMMY_TEAM1, MY_TEAM); 
+		public static const ALL_TEAMS:Array = new Array(CUSTOM_TEAM, MY_TEAM); 
 																
 		private var agents:Array;
 
@@ -139,7 +137,7 @@
 				if (deadAgentIndex != -1)
 				{
 					var deadAgent:Agent = agents[deadAgentIndex];
-					removeChild(deadAgent);
+					stage.removeChild(deadAgent);
 					agents.splice(deadAgentIndex, 1);
 					deadAgentIndex = -1;
 				}
@@ -199,7 +197,7 @@
 		
 		public function AddAgent(_agent:Agent) : void
 		{
-			addChild(_agent);
+			stage.addChild(_agent);
 			agents.push(_agent);
 		}
 	}
