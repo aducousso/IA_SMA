@@ -26,7 +26,7 @@ package  com.OCTOPUSH.systemExpert
 				var fait:Fait = (_premices[i] as Fait);
 				VerifieSiFaitExisteSinonAjouteOuMaJ(fait);
 			}
-			
+			//_conclusion.SetPoid(_poid);
 			VerifieSiFaitExisteSinonAjouteOuMaJ(_conclusion);
 			
 			baseR.AddRegle(_premices, _conclusion, _poid);

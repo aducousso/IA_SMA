@@ -26,11 +26,13 @@ package com.OCTOPUSH
 		private var lastReachedResource:Agent;
 		private var systemeExpert:SystemeExpert;
 		private var moteurInference:MoteurInference;
-		private var tentacleInfo:TentacleInfo;
+		public var tentacleInfo:TentacleInfo;
 		private var whereIAm:String;
+		private var whereIAmPrecisely:String;
 		private var seeATentacle:SuperBot;
 		private var delayToChangeDirection:int;
-		private var rotationAngle:Number = 0;
+		private var delayTest:Number = 0;
+		private var orderToStop:Boolean = false;
 		
 		public function SuperBot(_type:AgentType) 
 		{
@@ -42,6 +44,7 @@ package com.OCTOPUSH
 			systemeExpert = null;
 			
 			whereIAm = null;
+			whereIAmPrecisely = null;
 			
 			updateTime = 0;
 			
@@ -72,12 +75,29 @@ package com.OCTOPUSH
 			systemeExpert.AddRegle(new Array(SuperFacts.NO_TENTACLE, SuperFacts.AT_HOME), SuperFacts.CREATE_TENTACLE, 240);
 			systemeExpert.AddRegle(new Array(SuperFacts.NO_TENTACLE, SuperFacts.SEE_TENTACLE), SuperFacts.MEET_TENTACLE, 250);
 			// Mode tentacule
-				// comportement ROOT
 			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.IS_THE_ROOT), SuperFacts.STAY_IN_THE_TENTACLE_RESOURCE, 210);
 			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.IS_A_LINK), SuperFacts.FOLLOW_THE_PREVIOUS, 200);
 			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.IS_THE_HEAD), SuperFacts.ROTATE_TENTACLE, 200);
-			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.SEE_TENTACLE, SuperFacts.INTEREST_MEET_OTHER_TENTACLE), SuperFacts.MEET_TENTACLE, 220);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.SEE_TENTACLE, SuperFacts.INTEREST_MEET_OTHER_TENTACLE), SuperFacts.MEET_TENTACLE, 230);
 			
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.BEST_RESOURCE_SEEN, SuperFacts.TENTACLE_NOT_HOOKED, SuperFacts.IS_THE_HEAD), SuperFacts.GO_TO_BEST_RESOURCE, 220);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_TOO_LONG, SuperFacts.IS_THE_HEAD), SuperFacts.ROTATE_TENTACLE, 300);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.SEE_HIS_HOME, SuperFacts.ROOT_NOT_HOME), SuperFacts.HOME_BECOME_ROOT, 230);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.SEE_ENNEMY_HOME, SuperFacts.TARGET_NOT_ENNEMY_HOME), SuperFacts.ENNEMY_HOME_BECOME_TARGET, 230);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TARGETROOT_SAME), SuperFacts.ROTATE_TENTACLE, 300);
+			
+			// eat, carry and stock resource
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_HOOKED, SuperFacts.IS_THE_HEAD, SuperFacts.NO_RESOURCE), SuperFacts.GO_TO_TARGET_RESOURCE, 220);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_HOOKED, SuperFacts.IS_THE_HEAD, SuperFacts.IN_THE_TARGET_RESOURCE, SuperFacts.NO_RESOURCE), SuperFacts.EAT_TARGET_RESOURCE ,230);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.ORDER_TO_STOP, SuperFacts.NO_RESOURCE), SuperFacts.WAIT_HERE, 260);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.HAS_RESOURCE), SuperFacts.GO_TO_GIVE_RESOURCE, 230);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.HAS_RESOURCE, SuperFacts.TOUCH_YOUR_LAST_FRIEND), SuperFacts.GIVE_HIM_RESOURCE, 240);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.HAS_RESOURCE, SuperFacts.IS_THE_ROOT), SuperFacts.GO_TO_STOCK_IN_ROOT_RESOURCE, 240);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.HAS_RESOURCE, SuperFacts.IS_THE_ROOT, SuperFacts.IN_THE_ROOT_RESOURCE), SuperFacts.STOCK_IN_ROOT_RESOURCE, 250);
+			systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_HOOKED, SuperFacts.RESOURCE_TARGET_EMPTY), SuperFacts.ROTATE_TENTACLE, 290);
+			
+			//systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_HOOKED, SuperFacts.NEXT_LINK_TOO_FAR, SuperFacts.NO_RESOURCE), SuperFacts.FOLLOW_NEXT_SECURE, 210);
+			//systemeExpert.AddRegle(new Array(SuperFacts.IS_TENTACLE, SuperFacts.TENTACLE_HOOKED, SuperFacts.PREVIOUS_LINK_TOO_FAR, SuperFacts.NO_RESOURCE), SuperFacts.FOLLOW_PREVIOUS_SECURE, 220);
 		}
 		
 		override public function Update():void
@@ -120,35 +140,13 @@ package com.OCTOPUSH
 			if (seenResource != null) 
 			{
 				systemeExpert.SetFactValue(SuperFacts.SEE_RESOURCE, true);
-
-				/*if (takenResource != null)
-				{		
-					//***************************************
-					//Checking resource size
-					//***************************************
-					if (seenResource.GetType() == AgentType.AGENT_RESOURCE)
-					{
-						if ((seenResource as Resource).GetLife() >= (takenResource.GetLife())
-						{
-							systemeExpert.SetFactValue(SuperFacts.BIGGER_RESOURCE, true);							
-						}
-						else
-						{
-							systemeExpert.SetFactValue(SuperFacts.SMALLER_RESOURCE, true);							
-						}
-					}
-					/*if (seenResource.GetType() == AgentType.AGENT_BOT_HOME)
-					{
-						if (seenResource.GetLife() >= takenResource.GetLife())
-						{
-							systemeExpert.SetFactValue(SuperFacts.BIGGER_RESOURCE, true);							
-						}
-						else
-						{
-							systemeExpert.SetFactValue(SuperFacts.SMALLER_RESOURCE, true);							
-						}
-					}
-				}*/
+				
+				if (seenResource is BotHome) {
+					if ((seenResource as BotHome).GetTeamId() == GetTeamId())
+						systemeExpert.SetFactValue(SuperFacts.SEE_HIS_HOME, true);
+					else
+						systemeExpert.SetFactValue(SuperFacts.SEE_ENNEMY_HOME, true);						
+				}
 			}
 			else
 			{
@@ -180,29 +178,51 @@ package com.OCTOPUSH
 			}
 			whereIAm = null;
 			
+			switch(whereIAmPrecisely)
+			{
+				case ("IN_THE_TARGET_RESOURCE") :
+				systemeExpert.SetFactValue(SuperFacts.IN_THE_TARGET_RESOURCE, true);
+				break;
+				case ("TOUCH_YOUR_LAST_FRIEND") :
+				systemeExpert.SetFactValue(SuperFacts.TOUCH_YOUR_LAST_FRIEND, true);
+				break;
+				case ("IN_THE_ROOT_RESOURCE") :
+				systemeExpert.SetFactValue(SuperFacts.IN_THE_ROOT_RESOURCE, true);
+				break;
+			}
+			whereIAmPrecisely = null;
+			
 			//***************************************
 			// Checking if I see a tentacle and the interest
 			//***************************************
 			if (seeATentacle != null) {
 				systemeExpert.SetFactValue(SuperFacts.SEE_TENTACLE, true);
 				
-				if (tentacleInfo != null)
+				if ((tentacleInfo != null) && (tentacleInfo != seeATentacle.tentacleInfo))
 				{
-					if (seeATentacle.tentacleInfo.getBotsOfTheTentacle.length > tentacleInfo.getBotsOfTheTentacle.length)
+					if (seeATentacle.tentacleInfo.getBotsOfTheTentacle().length > tentacleInfo.getBotsOfTheTentacle().length)
 						systemeExpert.SetFactValue(SuperFacts.INTEREST_MEET_OTHER_TENTACLE, true);
-					else if (seeATentacle.tentacleInfo.getBotsOfTheTentacle.length == tentacleInfo.getBotsOfTheTentacle.length)
+					else if (seeATentacle.tentacleInfo.getBotsOfTheTentacle().length == tentacleInfo.getBotsOfTheTentacle().length){
 						if (CalculateIfACountResourceIsHigher(seeATentacle.tentacleInfo.getTheRootResource(), tentacleInfo.getTheRootResource()))
 							systemeExpert.SetFactValue(SuperFacts.INTEREST_MEET_OTHER_TENTACLE, true);
+					else if (seeATentacle.tentacleInfo.getTheRootResource() == tentacleInfo.getTheRootResource())
+						systemeExpert.SetFactValue(SuperFacts.INTEREST_MEET_OTHER_TENTACLE, true);
+					}
 				}
 			}
 			
 			//***************************************
-			// Checking if I am a tentacle
+			// Checking if I am a tentacle and check their specificities 
 			//***************************************
 			if (tentacleInfo == null) 
 				systemeExpert.SetFactValue(SuperFacts.NO_TENTACLE, true);
-			else
+			else {
 				systemeExpert.SetFactValue(SuperFacts.IS_TENTACLE, true);
+				if (tentacleInfo.getTheTargetResource() == null)
+					systemeExpert.SetFactValue(SuperFacts.TENTACLE_NOT_HOOKED, true);
+				else
+					systemeExpert.SetFactValue(SuperFacts.TENTACLE_HOOKED, true);
+			}
 				
 			//***************************************
 			// Checking if what is my position in the tentacle (if it exist)
@@ -216,6 +236,76 @@ package com.OCTOPUSH
 						systemeExpert.SetFactValue(SuperFacts.IS_A_LINK, true);
 			}
 			
+			//***************************************
+			// Checking if I see an other resource
+			//***************************************
+			if ( (tentacleInfo != null) && (tentacleInfo.getBestResourceSeen() != null) ) 
+				systemeExpert.SetFactValue(SuperFacts.BEST_RESOURCE_SEEN, true);
+			
+			//***************************************
+			// Checking if the tentacle is too long
+			//***************************************
+			if ( (tentacleInfo != null) && (tentacleInfo.CalculateSizeOfTheTentacle() > tentacleInfo.CalculateTheMaxSize()) ) {
+				//trace("tentacleInfo.CalculateSizeOfTheTentacle() = " + tentacleInfo.CalculateSizeOfTheTentacle());
+				//trace("tentacleInfo.CalculateTheMaxSize() = " + tentacleInfo.CalculateTheMaxSize());
+				systemeExpert.SetFactValue(SuperFacts.TENTACLE_TOO_LONG, true);
+			}
+			
+			//***************************************
+			// Checking if the root and target are home agents
+			//***************************************
+			if (tentacleInfo != null) {
+				if ( !((tentacleInfo.getTheRootResource() is BotHome) && ((tentacleInfo.getTheRootResource() as BotHome).GetTeamId() == GetTeamId())) )
+					systemeExpert.SetFactValue(SuperFacts.ROOT_NOT_HOME, true);
+				
+				if ( !((tentacleInfo.getTheTargetResource() is BotHome) && ((tentacleInfo.getTheTargetResource() as BotHome).GetTeamId() != GetTeamId())) ) 
+					systemeExpert.SetFactValue(SuperFacts.TARGET_NOT_ENNEMY_HOME, true);
+			}
+			
+			//***************************************
+			// Checking if the root and target are the same
+			//***************************************
+			if (tentacleInfo != null) {
+				if (tentacleInfo.getTheTargetResource() == tentacleInfo.getTheRootResource())
+					systemeExpert.SetFactValue(SuperFacts.TARGETROOT_SAME, true);
+			}
+			
+			//***************************************
+			// Checking if I have a resource
+			//***************************************
+			if (HasResource()) {
+				systemeExpert.SetFactValue(SuperFacts.HAS_RESOURCE, true);
+				orderToStop = false;
+			} else
+				systemeExpert.SetFactValue(SuperFacts.NO_RESOURCE, true);
+				
+			//***************************************
+			// Checking if I have the order to stop my activity
+			//***************************************
+			if (orderToStop)
+				systemeExpert.SetFactValue(SuperFacts.ORDER_TO_STOP, true);
+			
+			//***************************************
+			// Checking if the resource target is empty
+			//***************************************
+			if ((tentacleInfo != null) && (tentacleInfo.getTheTargetResource() is Resource) && ((tentacleInfo.getTheTargetResource() as Resource).GetLife() == 0) )
+				systemeExpert.SetFactValue(SuperFacts.RESOURCE_TARGET_EMPTY, true);
+			
+			//***************************************
+			// Checking if I the next link is too far
+			//***************************************
+			if (tentacleInfo != null && tentacleInfo.getTheNextBotOf(this) != null) {
+				if(distanceBetweenTwoPoints(new Point(x,y), new Point(tentacleInfo.getTheNextBotOf(this).x, tentacleInfo.getTheNextBotOf(this).y)) > (tentacleInfo.CalculateDistanceBetweenTwoBots()))
+					systemeExpert.SetFactValue(SuperFacts.NEXT_LINK_TOO_FAR, true);
+			}
+			
+			//***************************************
+			// Checking if I the previous link is too far
+			//***************************************
+			if (tentacleInfo != null && tentacleInfo.getThePreviousBotOf(this) != null) {
+				if(distanceBetweenTwoPoints(new Point(x,y), new Point(tentacleInfo.getThePreviousBotOf(this).x, tentacleInfo.getThePreviousBotOf(this).y)) > (tentacleInfo.CalculateDistanceBetweenTwoBots()))
+					systemeExpert.SetFactValue(SuperFacts.PREVIOUS_LINK_TOO_FAR, true);
+			}
 			
 			
 		}
@@ -231,10 +321,12 @@ package com.OCTOPUSH
 			for (var i:int = 0; i < faitsDeConclusion.length; i++) {
 				if ((Fait)(faitsDeConclusion[i]).GetEtat() && (Fait)(faitsDeConclusion[i]).Getpoid() > 0) {
 					if (indexFaitTemp >= 0){
-						if ((Fait)(faitsDeConclusion[i]).Getpoid() > (Fait)(faitsDeConclusion[indexFaitTemp]).Getpoid())
+						if ((Fait)(faitsDeConclusion[i]).Getpoid() > (Fait)(faitsDeConclusion[indexFaitTemp]).Getpoid()) {
 							(Fait)(faitsDeConclusion[indexFaitTemp]).SetEtat(false);
-						else
+							indexFaitTemp = i;
+						} else {
 							(Fait)(faitsDeConclusion[i]).SetEtat(false);
+						}
 					}else {
 						indexFaitTemp = i;
 					}
@@ -254,32 +346,32 @@ package com.OCTOPUSH
 					switch(unFait.GetLabel())
 					{
 						case SuperFacts.MEET_TENTACLE.GetLabel():
-						trace("MEET_TENTACLE");
+						//trace("MEET_TENTACLE");
 						MeetTentacle(seeATentacle);
 						break;
 						
 						case SuperFacts.CREATE_TENTACLE.GetLabel():
-						trace("CREATE_TENTACLE");
+						//trace("CREATE_TENTACLE");
 						BecomeTentacle(seenResource);
 						break;
 						
 						case SuperFacts.GO_TO_RESOURCE.GetLabel():
-						trace("GO_TO_RESOURCE");
+						//trace("GO_TO_RESOURCE");
 						GoToResource();
 						break;
 						
 						case SuperFacts.TAKE_RESOURCE.GetLabel():
-						trace("TAKE_RESOURCE");
+						//trace("TAKE_RESOURCE");
 						TakeResource();
 						break;
 						
 						case SuperFacts.PUT_DOWN_RESOURCE.GetLabel():
-						trace("PUT_DOWN_RESOURCE");
+						//trace("PUT_DOWN_RESOURCE");
 						PutDownResource();
 						break;
 						
 						case SuperFacts.CHANGE_DIRECTION.GetLabel():
-						trace("CHANGE_DIRECTION");
+						//trace("CHANGE_DIRECTION");
 						ChangeDirection();
 						break;
 						
@@ -295,23 +387,90 @@ package com.OCTOPUSH
 						
 						case SuperFacts.ROTATE_TENTACLE.GetLabel():
 						//trace("ROTATE_TENTACLE");
-						rotationAngle += (4 / tentacleInfo.getBotsOfTheTentacle().length);
-						Rotate(new Point(tentacleInfo.getTheRootResource().x, tentacleInfo.getTheRootResource().y), rotationAngle);
+						tentacleInfo.setTheTargetResource(null);
+						tentacleInfo.setRotationAngle(tentacleInfo.getRotationAngle() + 4 / tentacleInfo.getBotsOfTheTentacle().length);
+						Rotate(new Point(tentacleInfo.getTheRoot().x, tentacleInfo.getTheRoot().y), tentacleInfo.getRotationAngle());
 						break;
 						
-						/*case SuperFacts.NO_TENTACLE.GetLabel():
-						trace("NO_TENTACLE");
-						tentacleInfo = null;
-						break;*/
+						case SuperFacts.GO_TO_BEST_RESOURCE.GetLabel():
+						//trace("GO_TO_BEST_RESOURCE");
+						tentacleInfo.setTheTargetResource(tentacleInfo.getBestResourceSeen());
+						Follow(tentacleInfo.getTheTargetResource());
+						break;
+						
+						case SuperFacts.GO_TO_TARGET_RESOURCE.GetLabel():
+						//trace("GO_TO_TARGET_RESOURCE");
+						Follow(tentacleInfo.getTheTargetResource());
+						break;
+						
+						case SuperFacts.GO_TO_GIVE_RESOURCE.GetLabel():
+						//trace("GO_TO_GIVE_RESOURCE");
+						if (tentacleInfo.getThePreviousBotOf(this).HasResource() == false)
+							tentacleInfo.getThePreviousBotOf(this).SetOrderToStop(true);
+						Follow(tentacleInfo.getThePreviousBotOf(this));
+						break;
+						
+						case SuperFacts.GIVE_HIM_RESOURCE.GetLabel():
+						//trace("GIVE_HIM_RESOURCE");
+						if (tentacleInfo.getThePreviousBotOf(this).HasResource() == false) {
+							tentacleInfo.getThePreviousBotOf(this).SetResource(true);
+							tentacleInfo.getThePreviousBotOf(this).SetOrderToStop(false);
+						}
+						SetResource(false);
+						Follow(tentacleInfo.getThePreviousBotOf(this));
+						break;
+						
+						case SuperFacts.STOCK_IN_ROOT_RESOURCE.GetLabel():
+						//trace("STOCK_IN_ROOT_RESOURCE");
+						GiveResourceTo(tentacleInfo.getTheRootResource());
+						SetResource(false);
+						Follow(tentacleInfo.getTheRootResource());
+						break;
+						
+						case SuperFacts.EAT_TARGET_RESOURCE.GetLabel():
+						//trace("EAT_TARGET_RESOURCE");
+						EatResourceFrom(tentacleInfo.getTheTargetResource());
+						Follow(tentacleInfo.getTheTargetResource());
+						break;
+						
+						case SuperFacts.HOME_BECOME_ROOT.GetLabel():
+						//trace("HOME_BECOME_ROOT");
+						tentacleInfo.setTheRootResource(seenResource);
+						break;
+						
+						case SuperFacts.ENNEMY_HOME_BECOME_TARGET.GetLabel():
+						//trace("ENNEMY_HOME_BECOME_TARGET");
+						tentacleInfo.setTheTargetResource(seenResource);
+						break;
+						
+						case SuperFacts.WAIT_HERE.GetLabel():
+						//trace("WAIT_HERE");
+						//moveAt(new Point(x, y));
+						Follow(tentacleInfo.getTheNextBotOf(this));
+						break;
+						
+						case SuperFacts.GO_TO_STOCK_IN_ROOT_RESOURCE.GetLabel():
+						//trace("GO_TO_STOCK_IN_ROOT_RESOURCE");
+						Follow(tentacleInfo.getTheRootResource());
+						break;
+						
+						case SuperFacts.FOLLOW_NEXT_SECURE.GetLabel():
+						//trace("FOLLOW_NEXT_SECURE");
+						Follow(tentacleInfo.getTheNextBotOf(this));
+						break;
+						
+						case SuperFacts.FOLLOW_PREVIOUS_SECURE.GetLabel():
+						//trace("FOLLOW_PREVIOUS_SECURE");
+						Follow(tentacleInfo.getThePreviousBotOf(this));
+						break;
 					}
 				}
 			}
 			
 			seeATentacle = null;
-			/*if ((systemeExpert.GetFactBase().GetFactValue(SuperFacts.IS_TENTACLE) ==  false) && 
-			(systemeExpert.GetFactBase().GetFactValue(SuperFacts.SEE_TENTACLE) == false))
-				tentacleInfo = null;
-			*/
+			
+			if (systemeExpert.GetBaseFait().GetFait(SuperFacts.IS_THE_HEAD.GetLabel()).GetEtat())
+				tentacleInfo.RAZbestResourceSeen();
 		}
 		
 		public function CalculateIfACountResourceIsHigher(_resource1:Agent, _resource2:Agent) : Boolean {
@@ -330,10 +489,48 @@ package com.OCTOPUSH
 					if ( (_resource1 as BotHome).GetResourceCount() > (_resource2 as BotHome).GetResourceCount() )
 						return true;
 			}
-			
 			return false;
 		}
 		
+		public function EatResourceFrom(_anAgent:Agent) : void
+		{
+			if (_anAgent is Resource)
+			{
+				if (!HasResource())
+				{
+					(_anAgent as Resource).DecreaseLife();
+					SetResource(true);
+				}
+			}
+			else if (_anAgent is BotHome)
+			{
+				if (!HasResource())
+				{
+					(_anAgent as BotHome).TakeResource();
+					SetResource(true);
+				}
+			}
+		}
+		
+		public function GiveResourceTo(_anAgent:Agent) : void
+		{
+			if (_anAgent is Resource)
+			{
+				if (HasResource())
+				{
+					(_anAgent as Resource).IncreaseLife();
+					SetResource(false);
+				}
+			}
+			else if (_anAgent is BotHome)
+			{
+				if (HasResource())
+				{
+					(_anAgent as BotHome).AddResource();
+					SetResource(false);
+				}
+			}
+		}
 		
 		public function BecomeTentacle(_onThisResource:Agent):void 
 		{
@@ -349,7 +546,16 @@ package com.OCTOPUSH
 					}
 				}
 			}
-			
+		}
+		
+		public function SetOrderToStop(_value:Boolean) : void
+		{
+			orderToStop = _value;
+		}
+		
+		public function GetOrderToStop() : Boolean
+		{
+			return orderToStop;
 		}
 		
 		public function Follow(_thisAgent:Agent) : void
@@ -361,7 +567,6 @@ package com.OCTOPUSH
 		{
 			tentacleInfo = (_ofABotFriend as SuperBot).GetTentacleInfo();
 			tentacleInfo.getBotsOfTheTentacle().push(this);
-			//FollowThePreviousLink();
 		}
 		
 		public function Rotate(center:Point, angle:Number) : void {
@@ -405,7 +610,6 @@ package com.OCTOPUSH
 			{
 				moveAt(seenResource.GetTargetPoint());
 				//direction.normalize(1);
-				
 				seenResource = null;
 			}
 		}
@@ -484,6 +688,15 @@ package com.OCTOPUSH
 				if (distanceBetweenTwoPoints(new Point(this.x, this.y), new Point(collidedAgent.x, collidedAgent.y)) < 3)
 					ifCollisionWithSomething = true;
 				
+				if (tentacleInfo != null && ifCollisionWithSomething) {
+					if (tentacleInfo.getTheTargetResource() == collidedAgent)
+						whereIAmPrecisely = new String("IN_THE_TARGET_RESOURCE");
+					if (tentacleInfo.getThePreviousBotOf(this) == collidedAgent)
+						whereIAmPrecisely = new String("TOUCH_YOUR_LAST_FRIEND");
+					if (tentacleInfo.getTheRootResource() == collidedAgent)
+						whereIAmPrecisely = new String("IN_THE_ROOT_RESOURCE");
+				}
+				
 				if (collidedAgent is Resource)
 				{
 					reachedResource = (collidedAgent as Resource);
@@ -505,44 +718,39 @@ package com.OCTOPUSH
 							//trace("je suis en collision avec ma HOME");
 						}
 					}else{
-						if(ifCollisionWithSomething) {
+						if(ifCollisionWithSomething ) {
 							whereIAm = new String("AtEnnemyHome");
 							//trace("je suis en collision avec une HOME_ENNEMY");
 						}
 					}
 				}
-				
-				/*if (collidedAgent is Bot) {
-					trace("je suis en collision avec un bot");
-					 if (collidedAgent is SuperBot)
-					 {
-						 if((collidedAgent as SuperBot).G
-					 }
-				}*/
-				
 			}
 			
 			//Perception
+			
 			/*if ((collidedAgent is Bot) && (collidedAgent != this)) {
 				trace("mon champ de vision est en collision avec un bot "+ distanceBetweenTwoPoints(new Point(this.x, this.y), new Point(collidedAgent.x, collidedAgent.y)));
 			}*/
 			
-			
 			if ((collidedAgent.GetType() == AgentType.AGENT_RESOURCE) || (collidedAgent.GetType() == AgentType.AGENT_BOT_HOME))
-			{
+			{				
 				//The last reached resource can't be seen
 				if ((collidedAgent != lastReachedResource) || (lastReachedResource == null))
 				{
-					
 					if (collidedAgent is Resource)
 					{
 						//trace("mon champ de vision est en collision avec une RESSOURCE "+ distanceBetweenTwoPoints(new Point(this.x, this.y), new Point(collidedAgent.x, collidedAgent.y)));
 						seenResource = (collidedAgent as Resource);
+						if (tentacleInfo != null)
+							tentacleInfo.MaJBestResourceSeen(collidedAgent);
 					}
 					if (collidedAgent is BotHome)
 					{
 						//trace("mon champ de vision est en collision une HOME "+ distanceBetweenTwoPoints(new Point(this.x, this.y), new Point(collidedAgent.x, collidedAgent.y)));
 						seenResource = (collidedAgent as BotHome);
+						
+						if (tentacleInfo != null)
+							tentacleInfo.MaJBestResourceSeen(collidedAgent);
 					}
 				}
 			}				

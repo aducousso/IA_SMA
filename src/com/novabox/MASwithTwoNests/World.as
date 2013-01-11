@@ -26,7 +26,7 @@
 		public static const BOT_PERCEPTION_RADIUS:Number = 30;
 		public static var BOT_COUNT:Number = 2;
 		public static const BOT_INIT_POSITION:Point = new Point(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
-		public static const BOT_SPEED:Number = 50;
+		public static const BOT_SPEED:Number = 100;
 		public static const BOT_DIRECTION_CHANGE_DELAY:Number = 500;
 		
 		public static const RESOURCE_LIFE_RADIUS_COEFF:Number = 10;
@@ -43,7 +43,7 @@
 		public static var BOT_WITH_RESOURCE_SPEED_COEFF:Number		= 1;
 		public static var BOT_START_FROM_HOME:Boolean				= false;
 		
-		public static var RESOURCE_MIN_SPEED:Number					= 15;
+		public static var RESOURCE_MIN_SPEED:Number					= 5;
 		public static var RESOURCE_MAX_SPEED:Number					= 20;
 		
 		public static const DUMMY_TEAM1:BotTeam = new BotTeam(	"Dummy 1",
@@ -52,7 +52,7 @@
 																
 
 		public static const MY_TEAM:BotTeam = new BotTeam(	"MyTeamDeOuf",
-																0x0055AA,
+																0xFFFF00,
 																new Array(
 																TwitedEquipeBot.BOT_GENERIC /*,
 																TwitedEquipeBot.BOT_RECOLTEUR,

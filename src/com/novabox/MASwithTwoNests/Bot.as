@@ -95,7 +95,7 @@
 			
 			if (hasResource)
 			{
-				botColor =  color + 0x555555; //0X228822;
+				botColor =  color + 0x555FFF; //0X228822;
 			}
 			
 			botSprite.graphics.clear();

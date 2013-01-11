@@ -48,7 +48,7 @@ package  com.OCTOPUSH.systemExpert
 			while (i != baseR.GetRegles().length)
 			{
 				var regle:Regle = (baseR.GetRegles()[i] as Regle);
-				if(ToutesPremicesVraies(regle.GetPremices())== true && FaitEstVrai(regle.GetConclusion()) ==false)
+				if(ToutesPremicesVraies(regle.GetPremices())== true && (regle.GetPoid() > baseF.GetFait(regle.GetConclusion()).Getpoid() || FaitEstVrai(regle.GetConclusion()) == false) ) //&& FaitEstVrai(regle.GetConclusion()) ==false)
 					return regle;
 				else 
 					i++;
@@ -59,16 +59,16 @@ package  com.OCTOPUSH.systemExpert
 		
 		public function ChainageAvant() : void
 		{
-				var regle:Regle = PremiereRegle();
-				while (regle != null)
-				{
-					var fait:Fait = baseF.GetFait(regle.GetConclusion());
-					fait.SetEtat(true);
-					if(fait.Getpoid() < regle.GetPoid())
-						fait.SetPoid(regle.GetPoid());
-					conclusionsModifiees.push(fait);
-					regle = PremiereRegle();
-				}
+			var regle:Regle = PremiereRegle();
+			while (regle != null)
+			{
+				var fait:Fait = baseF.GetFait(regle.GetConclusion());
+				fait.SetEtat(true);
+				if(fait.Getpoid() < regle.GetPoid())
+					fait.SetPoid(regle.GetPoid());
+				conclusionsModifiees.push(fait);
+				regle = PremiereRegle();
+			}
 		}
 		
 		public function FaitsInitiaux() : Array
