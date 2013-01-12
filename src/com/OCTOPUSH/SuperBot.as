@@ -388,7 +388,7 @@ package com.OCTOPUSH
 						case SuperFacts.ROTATE_TENTACLE.GetLabel():
 						//trace("ROTATE_TENTACLE");
 						tentacleInfo.setTheTargetResource(null);
-						tentacleInfo.setRotationAngle(tentacleInfo.getRotationAngle() + 4 / tentacleInfo.getBotsOfTheTentacle().length);
+						tentacleInfo.setRotationAngle(tentacleInfo.getRotationAngle() + 5 / tentacleInfo.getBotsOfTheTentacle().length);
 						Rotate(new Point(tentacleInfo.getTheRoot().x, tentacleInfo.getTheRoot().y), tentacleInfo.getRotationAngle());
 						break;
 						
